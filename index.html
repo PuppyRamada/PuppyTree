@@ -38,6 +38,12 @@
         </div>
 
         <div id="gallery" class="gallery-container">
+            <div class="gallery-header">
+                <h2>Photo Gallery</h2>
+                <button class="gallery-close" onclick="toggleGallery()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
             <div class="gallery-grid">
                 <!-- Gallery items will be dynamically loaded here -->
             </div>
@@ -54,80 +60,6 @@
         </footer>
     </div>
 
-    <script>
-        function toggleGallery() {
-            const gallery = document.getElementById('gallery');
-            gallery.classList.toggle('active');
-            
-            if (gallery.classList.contains('active') && !gallery.hasAttribute('data-loaded')) {
-                loadGallery();
-                gallery.setAttribute('data-loaded', 'true');
-            }
-        }
-
-        function loadGallery() {
-            const gridContainer = document.querySelector('.gallery-grid');
-            
-            // Function to check if a file is an image
-            function isImageFile(filename) {
-                const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
-                return imageExtensions.some(ext => 
-                    filename.toLowerCase().endsWith(ext)
-                );
-            }
-
-            // Read the gallery directory and create elements for each image
-            fetch('list-images.php')
-                .then(response => response.json())
-                .then(images => {
-                    images.forEach(image => {
-                        if (isImageFile(image)) {
-                            const item = document.createElement('div');
-                            item.className = 'gallery-item';
-                            
-                            const img = document.createElement('img');
-                            img.src = `images/gallery/${image}`;
-                            img.alt = 'Gallery Image';
-                            
-                            const overlay = document.createElement('div');
-                            overlay.className = 'gallery-item-overlay';
-                            
-                            item.appendChild(img);
-                            item.appendChild(overlay);
-                            gridContainer.appendChild(item);
-
-                            // Handle click to view full size
-                            item.addEventListener('click', () => {
-                                openFullSize(img.src);
-                            });
-                        }
-                    });
-                })
-                .catch(error => {
-                    console.error('Error loading gallery:', error);
-                    gridContainer.innerHTML = `
-                        <div class="gallery-error">
-                            <i class="fas fa-exclamation-circle"></i>
-                            <p>Oops! Something went wrong loading the gallery.</p>
-                        </div>
-                    `;
-                });
-        }
-
-        function openFullSize(imageSrc) {
-            const modal = document.createElement('div');
-            modal.className = 'modal';
-            
-            const modalImg = document.createElement('img');
-            modalImg.src = imageSrc;
-            
-            modal.appendChild(modalImg);
-            document.body.appendChild(modal);
-
-            modal.addEventListener('click', () => {
-                modal.remove();
-            });
-        }
-    </script>
+    <script src="gallery.js"></script>
 </body>
 </html> 
