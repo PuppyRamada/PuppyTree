@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✧･ﾟ Puppy Ramada's Links ･ﾟ✧</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="profile">
+            <div class="profile-picture">
+                <img src="images/profile.jpg" alt="Puppy Ramada" class="avatar">
+            </div>
+            <h1>✧･ﾟ Puppy Ramada ･ﾟ✧</h1>
+            <div class="bio">
+                ˗ˏˋ 🐾 Welcome to my puppy paradise! 🎀 ˎˊ˗
+                <br>
+                ♡ ⋆｡°✩ kawaii vibes only ✩°｡⋆ ♡
+            </div>
+        </div>
+
+        <div class="links">
+            <a href="https://instagram.com/dairycowcow" class="link-card instagram">
+                <i class="fab fa-instagram"></i>
+                ˗ˏˋ Instagram ˎˊ˗
+            </a>
+            <a href="https://fansly.com/evelynnautumn" class="link-card fansly">
+                <i class="fas fa-heart"></i>
+                ˗ˏˋ Fansly ˎˊ˗
+            </a>
+            <button class="link-card gallery-button" onclick="toggleGallery()">
+                <i class="fas fa-camera-retro"></i>
+                ˗ˏˋ Photo Gallery ˎˊ˗
+            </button>
+        </div>
+
+        <div id="gallery" class="gallery-container">
+            <div class="gallery-grid">
+                <!-- Gallery items will be dynamically loaded here -->
+            </div>
+        </div>
+
+        <footer>
+            <div class="paw-prints">
+                <span>🐾</span>
+                <span>🎀</span>
+                <span>🐾</span>
+                <span>💕</span>
+                <span>🐾</span>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        function toggleGallery() {
+            const gallery = document.getElementById('gallery');
+            gallery.classList.toggle('active');
+            
+            if (gallery.classList.contains('active') && !gallery.hasAttribute('data-loaded')) {
+                loadGallery();
+                gallery.setAttribute('data-loaded', 'true');
+            }
+        }
+
+        function loadGallery() {
+            const gridContainer = document.querySelector('.gallery-grid');
+            
+            // Function to check if a file is an image
+            function isImageFile(filename) {
+                const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+                return imageExtensions.some(ext => 
+                    filename.toLowerCase().endsWith(ext)
+                );
+            }
+
+            // Read the gallery directory and create elements for each image
+            fetch('list-images.php')
+                .then(response => response.json())
+                .then(images => {
+                    images.forEach(image => {
+                        if (isImageFile(image)) {
+                            const item = document.createElement('div');
+                            item.className = 'gallery-item';
+                            
+                            const img = document.createElement('img');
+                            img.src = `images/gallery/${image}`;
+                            img.alt = 'Gallery Image';
+                            
+                            const overlay = document.createElement('div');
+                            overlay.className = 'gallery-item-overlay';
+                            
+                            item.appendChild(img);
+                            item.appendChild(overlay);
+                            gridContainer.appendChild(item);
+
+                            // Handle click to view full size
+                            item.addEventListener('click', () => {
+                                openFullSize(img.src);
+                            });
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading gallery:', error);
+                    gridContainer.innerHTML = `
+                        <div class="gallery-error">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <p>Oops! Something went wrong loading the gallery.</p>
+                        </div>
+                    `;
+                });
+        }
+
+        function openFullSize(imageSrc) {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            
+            const modalImg = document.createElement('img');
+            modalImg.src = imageSrc;
+            
+            modal.appendChild(modalImg);
+            document.body.appendChild(modal);
+
+            modal.addEventListener('click', () => {
+                modal.remove();
+            });
+        }
+    </script>
+</body>
+</html> 
